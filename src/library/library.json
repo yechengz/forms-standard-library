@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
-  "id": "yext_standard-library",
-  "displayName": "Standard Library",
-  "description": "The original Pages for Marketers sections.",
+  "id": "forms-standard-library",
+  "displayName": "forms-standard-library",
+  "description": "The original Pages for Marketers sections with form submission support.",
   "locales": [
     "cs",
     "da",

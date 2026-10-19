@@ -16,7 +16,7 @@ import {
   waitFor,
   type RenderResult,
 } from "@testing-library/react";
-import { FormSection, FormSectionProps } from "./FormSection.tsx";
+import { config, FormSection, FormSectionProps } from "../sections/FormSection.tsx";
 import {
   sharedComponentConfigs,
   sharedComponentMetadata,
@@ -176,9 +176,9 @@ describe("FormSection", () => {
     ).toBe("");
   });
 
-  it("sends an event form with email when the method selector is hidden", async () => {
+  it.each(["HS_EVENT", "CUSTOM_PLUGIN", "EMAIL_ONLY"] as const)("sends a %s form with email when the method selector is hidden", async (formType) => {
     const props = getProps();
-    props.data.formType = "HS_EVENT";
+    props.data.formType = formType;
     props.data.showPreferredContactMethod = false;
     props.data.defaultContactMethod = "EMAIL";
     props.data.fields.push({
@@ -214,7 +214,7 @@ describe("FormSection", () => {
 
     await waitFor(() => expect(fetch).toHaveBeenCalledTimes(1));
     const body = JSON.parse(vi.mocked(fetch).mock.calls[0][1]?.body as string);
-    expect(body.type).toBe("HS_EVENT");
+    expect(body.type).toBe(formType);
     expect(body.data).toEqual({
       first_name: "Ada",
       last_name: "Lovelace",
@@ -1122,11 +1122,12 @@ describe("FormSection", () => {
     await waitFor(() => expect(fetch).toHaveBeenCalledTimes(1));
   });
 
-  it("when a saved entity layout uses FormSection, then its hidden config is available", () => {
-    expect(sharedComponentMetadata).toContainEqual({
+  it("when a saved entity layout uses FormSection, then its section config is available", () => {
+    expect(config).toMatchObject({
       id: "FormSection",
       pageSetTypes: ["ENTITY"],
     });
-    expect(sharedComponentConfigs.FormSection).toBe(FormSection);
+    expect(sharedComponentMetadata.some((component) => component.id === config.id)).toBe(false);
+    expect(sharedComponentConfigs.FormSection).toBeUndefined();
   });
 });
